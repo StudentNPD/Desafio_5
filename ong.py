@@ -1,42 +1,50 @@
-# Desafio ONG
-# Crear un script llamado ong.py que contenga las siguientes funciones:
-# ○ Una función que calcule el factorial.
-# ○ Una función que calcule la productoria.
-# ○ Una función que permita controlar los cálculos. Esta función se debe invocar de la siguiente manera:
-# Output
-# calcular(fact_1 = 5, prod_1 = [3,6,4,2,8], fact_2 = 6)
-#   El factorial de 5 es 120
-#   La productoria de [4, 6, 7, 4, 3] es 2016
-#   El factorial de 6 es 720
+###### Apoyo Matemático ######
+# se debe ejecutar de la siguiente forma por linea de comando com o en el siguiente ejemplo:
+# ong.py fact_1=5 prod_1[1,2,3,4,5,6] fact_2=8 fact_3=3
 
-# ○ Una función que calcule el factorial
-def calcular_factorial(fact_i):
-    n = fact_i
+import sys
+
+def factorial(n):
+    if n < 0:
+        return "El factorial no está definido para números negativos"
     if n == 0 or n == 1:
         return 1
+    return n * factorial(n - 1)
+
+def productoria(lista):
+    if not lista:
+        return "La lista está vacía"
+    resultado = 1
+    for num in lista:
+        resultado *= num
+    return resultado
+
+def calcular(**kwargs): 
+    for key, valor in kwargs.items(): 
+        if key.startswith('fact'):    
+            resultado = factorial(valor)
+            print(f"El factorial de {valor} es {resultado}")
+        elif key.startswith('prod'):
+            resultado = productoria(valor)
+            print(f"La productoria de {valor} es {resultado}")
+        else:
+            print(f"No se reconoce: {key}")
+
+args = {} # crea diccionario
+for arg in sys.argv[1:]:
+    if '=' in arg:  # Verifica que el argumento contiene '='
+        key, valor = arg.split('=')
+        key = key.strip()
+        valor = valor.strip()
+        
+        if key.startswith('fact'):
+            args[key] = int(valor)  # Convierte el valor a entero directamente
+        elif key.startswith('prod'):
+            # Convierte la cadena a una lista de enteros
+            valor = valor.strip('[]')  # Eliminar corchetes
+            lista_numeros = [int(x) for x in valor.split(',')]  # Convierte cada elemento a entero
+            args[key] = lista_numeros
     else:
-        return n * calcular_factorial(n - 1)
+        print(f"El argumento '{arg}' no tiene un '=' y se ignorará.")
 
-# ○ Una función que calcule la productoria
-def calcular_productoria(prod_i):
-    productoria = 1
-    for numero in prod_i:
-        productoria *= numero
-    return productoria
-
-# ○ Una función que permita controlar los cálculos
-def calcular(**kwargs):
-    if 'fact_1' in kwargs:
-        fact_1 = kwargs['fact_1']
-        print(f"El factorial de {fact_1} es {calcular_factorial(fact_1)}")
-    
-    if 'prod_1' in kwargs:
-        prod_1 = kwargs['prod_1']
-        print(f"La productoria de {prod_1} es {calcular_productoria(prod_1)}")
-    
-    if 'fact_2' in kwargs:
-        fact_2 = kwargs['fact_2']
-        print(f"El factorial de {fact_2} es {calcular_factorial(fact_2)}")
-
-# Invocar la función con los parámetros dados
-calcular(fact_1=5, prod_1=[3, 6, 4, 2, 8], fact_2=6)
+calcular(**args)
